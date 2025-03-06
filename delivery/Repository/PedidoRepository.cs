@@ -1,4 +1,5 @@
-﻿using delivery.Infra;
+﻿using delivery.DTO;
+using delivery.Infra;
 using delivery.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,9 +14,35 @@ namespace delivery.Repository
             _connectionContext = connectionContext;
         }
 
-        public Task<Pedido> Create(Pedido pedido)
+        public async Task<Pedido> CreatePedido(Pedido pedido, List<int> itensId)
         {
-            throw new NotImplementedException();
+           
+            try
+            {
+                var findItems = await _connectionContext.Items.Where(i => itensId.Contains(i.Id)).ToListAsync();
+
+                if (findItems == null || findItems.Count == 0)
+                {
+                    throw new Exception("Item não encontrado");
+                }
+
+                var createPedido = new Pedido()
+                {
+                    Name = pedido.Name,
+                    Date = DateTime.UtcNow,
+                    Items = findItems
+                };
+
+                _connectionContext.Add(createPedido);
+                await _connectionContext.SaveChangesAsync();
+
+                return createPedido;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao criar o pedido: " + ex.Message);
+            }
         }
 
         public async Task<List<Pedido>> ListPedidos()
@@ -24,7 +51,7 @@ namespace delivery.Repository
             {
                 var list = await _connectionContext.Pedidos.ToListAsync();
 
-                if(list.Count <= 0)
+                if (list.Count <= 0)
                 {
                     throw new Exception("Lista vazia!");
                 }

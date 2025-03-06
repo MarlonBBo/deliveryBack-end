@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppConnectionContext>(options =>
 });
 
 builder.Services.AddScoped<IPedidoInterface, PedidoRepository>();
+builder.Services.AddScoped<IItemInterface, ItemRepository>();
 
 var app = builder.Build();
 

@@ -49,7 +49,9 @@ namespace delivery.Repository
         {
             try
             {
-                var list = await _connectionContext.Pedidos.ToListAsync();
+                var list = await _connectionContext.Pedidos
+                .Include(p => p.Items) 
+                .ToListAsync();
 
                 if (list.Count <= 0)
                 {

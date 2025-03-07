@@ -18,11 +18,24 @@ namespace delivery.Controllers
         }
 
         [HttpGet("Lista")]
-        public async Task<List<Pedido>>Lista()
+        public async Task<IActionResult> Lista()
         {
             var pedido = await _pedido.ListPedidos();
-            return pedido;
+            return Ok(
+                    pedido.Select(pedido => new
+                    {
+                        pedido.Id,
+                        pedido.Name,
+                        pedido.Date,
+                        Items = pedido.Items?.Select(item => new
+                        {
+                            item.Name,
+                            item.Quantidade
+                        }).ToList()
+                    }).ToList()
+                    );
         }
+
 
         [HttpPost("CreatePedido")]
         public async Task<IActionResult> CreatePedido([FromBody] PedidoDTO pedidoDto)

@@ -28,5 +28,11 @@ namespace delivery.Controllers
             var items = await _item.ListItems();
             return items;
         }
+
+        [HttpGet("get")]
+        public string Get()
+        {
+            return "Hello World";
+        }
     }
 }
